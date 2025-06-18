@@ -1,6 +1,6 @@
 local player = game:GetService("Players").LocalPlayer
 local gui = Instance.new("ScreenGui")
-gui.Name = "AutoDupingSystem"
+gui.Name = "7xxx-AutoDupingSystem"
 gui.ResetOnSpawn = false
 gui.Parent = player:WaitForChild("PlayerGui")
 
