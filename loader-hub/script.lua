@@ -4,109 +4,66 @@ local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
    Name = "7xxx HUB",
-   Icon = 0,
+   Icon = 0, -- Icon in Topbar. Can use Lucide Icons (string) or Roblox Image (number). 0 to use no icon (default).
    LoadingTitle = "7xxx Interface Suite",
    LoadingSubtitle = "by 7xxx Duping #GAG",
-   Theme = "Default",
+   Theme = "Default", -- Check https://docs.sirius.menu/rayfield/configuration/themes
+
    DisableRayfieldPrompts = false,
-   DisableBuildWarnings = false,
+   DisableBuildWarnings = false, -- Prevents Rayfield from warning when the script has a version mismatch with the interface
+
    ConfigurationSaving = {
       Enabled = false,
-      FolderName = nil,
+      FolderName = nil, -- Create a custom folder for your hub/game
       FileName = "Hub"
    },
+
    Discord = {
-      Enabled = true,
-      Invite = "https://discord.gg/2pKgPGNm",
-      RememberJoins = false
+      Enabled = true, -- Prompt the user to join your Discord server if their executor supports it
+      Invite = "https://discord.gg/2pKgPGNm", -- The Discord invite code, do not include discord.gg/. E.g. discord.gg/ ABCD would be ABCD
+      RememberJoins = false -- Set this to false to make them join the discord every time they load it up
    },
-   KeySystem = false,
+
+   KeySystem = false, -- Set this to true to use our key system
    KeySettings = {
       Title = "Untitled",
       Subtitle = "Key System",
-      Note = "No method of obtaining the key is provided",
-      FileName = "Key",
-      SaveKey = true,
-      GrabKeyFromSite = false,
-      Key = {"Hello"}
+      Note = "No method of obtaining the key is provided", -- Use this to tell the user how to get a key
+      FileName = "Key", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
+      SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
+      GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
+      Key = {"Hello"} -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
    }
 })
 
--- Function to create initialization screen
-local function showInitializationScreen()
-    local screenGui = Instance.new("ScreenGui")
-    screenGui.Name = "InitializationDisplay"
-    screenGui.IgnoreGuiInset = true
-    screenGui.ResetOnSpawn = false
-    screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-    screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
-
-    local textLabel = Instance.new("TextLabel")
-    textLabel.Name = "InitializationText"
-    textLabel.Size = UDim2.new(1, 0, 1, 0)
-    textLabel.Position = UDim2.new(0, 0, 0, 0)
-    textLabel.BackgroundColor3 = Color3.new(0, 0, 0)
-    textLabel.TextColor3 = Color3.new(0, 1, 0)
-    textLabel.Font = Enum.Font.Code
-    textLabel.TextSize = 36
-    textLabel.Text = "PLS WAIT Initializing Database..."
-    textLabel.TextScaled = false
-    textLabel.TextWrapped = true
-    textLabel.TextXAlignment = Enum.TextXAlignment.Center
-    textLabel.TextYAlignment = Enum.TextYAlignment.Center
-    textLabel.Parent = screenGui
-
-    -- Color cycling coroutine
-    coroutine.wrap(function()
-        local hue = 0
-        while true do
-            hue = (hue + 0.01) % 1
-            textLabel.TextColor3 = Color3.fromHSV(hue, 1, 1)
-            local dots = string.rep(".", math.floor((tick() % 3) + 1))
-            textLabel.Text = "PLS WAIT Initializing Database" .. dots
-            wait(0.1)
-        end
-    end)()
-    
-    return screenGui
-end
-
-local Tab = Window:CreateTab("Script Tab", 4483362458)
+local Tab = Window:CreateTab("Script Tab", 4483362458) -- Title, Image
 
 local Section = Tab:CreateSection("Keyless Script Selection")
 
 local Button = Tab:CreateButton({
     Name = "No-Lag Script",
     Callback = function()
-        local initScreen = showInitializationScreen()
         loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/NoLag-id/No-Lag-HUB/refs/heads/main/Loader/LoaderV1.lua"))()
         task.wait(15.5)
-        initScreen:Destroy()
         loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/NoLag-idd/No-Lag-HUB/refs/heads/main/Loader/LoaderV1.lua"))()    
     end,
 })
 
 local Button = Tab:CreateButton({
     Name = "Anti Stealer",
-    Callback = function()
-        local initScreen = showInitializationScreen()
-        loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/NoLag-idd/No-Lag-HUB/refs/heads/main/Loader/LoaderV1.lua"))()
-        task.wait(15.5)
-        initScreen:Destroy()
+        loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/NoLag-idd/No-Lag-HUB/refs/heads/main/Loader/LoaderV1.lua"))()     
     end,
 })
 
-local Tab1 = Window:CreateTab("Script Tab", 4483362458)
+local Tab1 = Window:CreateTab("Script Tab", 4483362458) -- Title, Image
 
 local Section = Tab1:CreateSection("Key Script Selection")
 
 local Button = Tab1:CreateButton({
     Name = "Lunor Script",
     Callback = function()
-        local initScreen = showInitializationScreen()
         loadstring(game:HttpGet("https://lunor.dev/loader"))()
         task.wait(15.5)
-        initScreen:Destroy()
         loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/NoLag-idd/No-Lag-HUB/refs/heads/main/Loader/LoaderV1.lua"))()    
     end,
 })
@@ -114,12 +71,11 @@ local Button = Tab1:CreateButton({
 local Button = Tab1:CreateButton({
     Name = "Lumin Script",
     Callback = function()
-        local initScreen = showInitializationScreen()
         loadstring(game:HttpGet("https://lumin-hub.lol/loader.lua",true))()
         task.wait(15.5)
-        initScreen:Destroy()
         loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/NoLag-idd/No-Lag-HUB/refs/heads/main/Loader/LoaderV1.lua"))()   
     end,
 })
+
 
 Rayfield:LoadConfiguration()
