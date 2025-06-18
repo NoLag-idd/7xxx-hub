@@ -55,7 +55,9 @@ local Button = Tab:CreateButton({
     end,
 })
 
-local Tab1 = Window:CreateTab("Script Tab", 4483362458) -- Title, Image
+
+
+local Tab = Window1:CreateTab("Script Tab", 4483362458) -- Title, Image
 
 local Section = Tab1:CreateSection("Key Script Selection")
 
